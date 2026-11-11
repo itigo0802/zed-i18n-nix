@@ -23,7 +23,13 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Update zed-i18n (version + hash)
-        run: nix run nixpkgs#nix-update -- --flake --use-update-script zed-i18n
+        # --use-update-script は使わない: passthru.updateScript は nix-update-script
+        # （nix-update を呼ぶスクリプト）なので、自分自身を呼ぶ再帰になり exit 1 する。
+        # 代わりにタグ形式を --version-regex で直接指定する。
+        run: |
+          nix run nixpkgs#nix-update -- --flake \
+            --version-regex '^v([0-9]+\.[0-9]+\.[0-9]+-i18n\.[0-9]+)$' \
+            zed-i18n
 
       - name: Commit and push if changed
         run: |
