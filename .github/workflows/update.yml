@@ -2,7 +2,7 @@ name: update
 
 # LI-NA/zed-i18n の最新リリースを検出して version と hash を進める。
 # ここが「他のパッケージと同じように nix flake update で追従できる」を支える部分。
-# 前提: このリポジトリの権限（private でも可）と、ワークフローからの push 許可。
+# 前提: このリポジトリの権限と、ワークフローからの push 許可（contents: write）。
 
 on:
   schedule:
@@ -23,7 +23,7 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Update zed-i18n (version + hash)
-        run: nix run nixpkgs#nix-update -- --flake zed-i18n
+        run: nix run nixpkgs#nix-update -- --flake --use-update-script zed-i18n
 
       - name: Commit and push if changed
         run: |
