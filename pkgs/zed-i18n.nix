@@ -45,7 +45,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "https://github.com/LI-NA/zed-i18n/releases/download/v${finalAttrs.version}/zed-i18n-linux-x86_64.tar.gz";
-    hash = "sha256-0sx9d72hmzynn9d1w6ni1sqh1dgzzy84i27ay0qfzgxy5fcs4klp";
+    hash = "sha256-l06imSu+v+8w8OqISJD//7UAsQ7RGh5astb/CsVpqWs=";
   };
 
   nativeBuildInputs = [
