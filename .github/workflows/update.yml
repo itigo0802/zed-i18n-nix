@@ -1,0 +1,39 @@
+name: update
+
+# LI-NA/zed-i18n の最新リリースを検出して version と hash を進める。
+# ここが「他のパッケージと同じように nix flake update で追従できる」を支える部分。
+# 前提: このリポジトリの権限（private でも可）と、ワークフローからの push 許可。
+
+on:
+  schedule:
+    # 毎週月曜 03:00 UTC（= 12:00 JST）
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      - name: Update zed-i18n (version + hash)
+        run: nix run nixpkgs#nix-update -- --flake zed-i18n
+
+      - name: Commit and push if changed
+        run: |
+          if git diff --quiet; then
+            echo "zed-i18n is already up to date"
+            exit 0
+          fi
+          version="$(nix eval --raw .#zed-i18n.version)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "zed-i18n: bump to ${version}"
+          git push
