@@ -41,11 +41,11 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "zed-i18n";
-  version = "1.27.0-i18n.1";
+  version = "1.28.1-i18n.1";
 
   src = fetchurl {
     url = "https://github.com/LI-NA/zed-i18n/releases/download/v${finalAttrs.version}/zed-i18n-linux-x86_64.tar.gz";
-    hash = "sha256-l06imSu+v+8w8OqISJD//7UAsQ7RGh5astb/CsVpqWs=";
+    hash = "sha256-nTGslKT9jL+RA5x/dSIKf+W3nZq2ECnXog68Oa25Xk8=";
   };
 
   nativeBuildInputs = [
