@@ -26,8 +26,17 @@ jobs:
         # --use-update-script は使わない: passthru.updateScript は nix-update-script
         # （nix-update を呼ぶスクリプト）なので、自分自身を呼ぶ再帰になり exit 1 する。
         # 代わりにタグ形式を --version-regex で直接指定する。
+        #
+        # 暫定回避（Mic92/nix-update#687）: nix-update 1.16.0 は `nix flake metadata` が返す
+        # store path が実体化済みである前提で、それを別プロセスの builtins.getFlake に渡す。
+        # Nix 2.35 以降は flake ソースを遅延コピーするため未実体化のまま渡り、
+        # "error: opening file /nix/store/…-source: No such file or directory" で eval が落ちる。
+        # nixpkgs が nixVersions.stable を 2.34.9 -> 2.35.6 にした（621c1b2c6, 2026-11-10）ため
+        # チャネル経由で Nix 2.35 が入るようになり、11-16 の週次ジョブから失敗している。
+        # 遅延コピー以前（nix_2_34 既定）の 26.05 から nix-update を実行して回避する。
+        # nix-update 1.16.1（修正 #692）が出たら `nixpkgs#nix-update` に戻す。
         run: |
-          nix run nixpkgs#nix-update -- --flake \
+          nix run github:NixOS/nixpkgs/nixos-26.05#nix-update -- --flake \
             --version-regex '^v([0-9]+\.[0-9]+\.[0-9]+-i18n\.[0-9]+)$' \
             zed-i18n
 
